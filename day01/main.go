@@ -10,11 +10,6 @@ import (
 )
 
 func main() {
-	one()
-}
-
-func one() {
-	// Open file
 	f, err := os.Open("input1.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -24,31 +19,29 @@ func one() {
 	var elves []int
 	var current int
 
-	// Read line by line
 	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		t := scanner.Text()
 
-		// Append to elves or increment current
-		if t == "" {
+	// Known bug - last elf isn't counted as there's no "" in input1.txt after it
+	for scanner.Scan() {
+		if scanner.Text() == "" {
 			elves = append(elves, current)
 			current = 0
-		} else {
-			i, err := strconv.Atoi(t)
-			if err != nil {
-				log.Fatal(err)
-			}
-			current += i
+			continue
 		}
 
+		i, err := strconv.Atoi(scanner.Text())
+		if err != nil {
+			log.Fatal(err)
+		}
+		current += i
 	}
 
-	// Scanner errors
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
 
-	// Print sum of top 3
 	sort.Sort(sort.Reverse(sort.IntSlice(elves)))
-	fmt.Println(elves[0] + elves[1] + elves[2])
+
+	fmt.Println("Part 1:", elves[0])
+	fmt.Println("Part 2:", elves[0]+elves[1]+elves[2])
 }
